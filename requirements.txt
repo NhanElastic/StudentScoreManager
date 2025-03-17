@@ -1,0 +1,5 @@
+fastapi[all]  # Installs FastAPI with all optional dependencies
+uvicorn  # ASGI server to run FastAPI
+sqlmodel  # High-level ORM built on SQLAlchemy
+aiomysql  # MySQL async driver (alternative: aiomysql)
+python-dotenv  # Load environment variables from .env file
