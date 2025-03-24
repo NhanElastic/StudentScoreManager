@@ -1,8 +1,10 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import List, Optional
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+from database.database import Base
 
-class Subject(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(nullable=False, max_length=255)
-    amount: int = Field(nullable=False)
+class Subject(Base):
+    __tablename__ = "subject"
 
+    subject_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=False)
+    name: Mapped[str] = mapped_column(String(255))
+    amount: Mapped[int] = mapped_column(Integer)

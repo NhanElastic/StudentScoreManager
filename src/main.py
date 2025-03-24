@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from database.database import init_db, close_db
 from student import student_controller
+from subject import subject_controller
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,3 +19,4 @@ app = FastAPI(lifespan=lifespan)
  
 # Register Routers
 app.include_router(student_controller.router)
+app.include_router(subject_controller.router)
