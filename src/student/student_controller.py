@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from student.student_service import StudentService
 from database.database import get_db
+from fastapi.responses import JSONResponse
+from student.student_schema import StudentSchema
 
 router = APIRouter(
     prefix="/students",
@@ -9,3 +11,57 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+@router.get("/list")
+async def get_students(db: AsyncSession = Depends(get_db)):
+    try:
+        student_service = StudentService(db)
+        students = await student_service.get_all_students()
+        return [StudentSchema.model_validate(student) for student in students]
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"message": "An error occurred", "error": str(e)})
+    
+@router.post("/add")
+async def add_student(student_data: StudentSchema, db: AsyncSession = Depends(get_db)):
+    try:
+        student_service = StudentService(db)
+        student = await student_service.add_student(
+            student_id=student_data.student_id,
+            name=student_data.name,
+            birthdate=student_data.birthdate,
+            class_=student_data.class_
+        )
+        return JSONResponse(content={"message": "Student added successfully"})
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"message": "An error occurred", "error": str(e)})
+    
+@router.delete("/remove/{student_id}")
+async def remove_student(student_id: int, db: AsyncSession = Depends(get_db)):
+    try:
+        student_service = StudentService(db)
+        student = await student_service.remove_student(student_id)
+        if student:
+            return JSONResponse(content={"message": "Student removed successfully"})
+        return JSONResponse(content={"message": "Student not found"})
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"message": "An error occurred", "error": str(e)})
+    
+@router.put("/update/")
+async def update_student(student_data: StudentSchema, db: AsyncSession = Depends(get_db)):
+    try:
+        student_service = StudentService(db)
+        student = await student_service.update_student(
+            student_id=student_data.student_id,
+            name=student_data.name,
+            birthdate=student_data.birthdate,
+            class_=student_data.class_
+        )
+        if student:
+            return JSONResponse(content={"message": "Student updated successfully"})
+        return JSONResponse(content={"message": "Student not found"})
+    except Exception as e:
+        print(e)
+        return JSONResponse(content={"message": "An error occurred", "error": str(e)})
+    

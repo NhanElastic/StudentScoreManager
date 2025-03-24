@@ -1,10 +1,13 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import List, Optional
+from sqlalchemy import Integer, String, Date
+from sqlalchemy.orm import Mapped, mapped_column
+from database.database import Base
+class Student(Base):
+    __tablename__ = "student" 
 
-class Student(SQLModel, table=True):
-    student_id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(nullable=False, max_length=100)
-    class_name: str = Field(nullable=False, max_length=50)
-    birth: str = Field(nullable=False)
+    student_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=False)
+    name: Mapped[str] = mapped_column(String(255))
+    birthdate: Mapped[str] = mapped_column(Date)
+    class_: Mapped[str] = mapped_column(String(255))
 
-
+    class Config:
+        from_attributes = True
