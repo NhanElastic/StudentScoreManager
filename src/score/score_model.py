@@ -1,15 +1,16 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional
-from student.student_model import Student
-import datetime
-from subject.subject_model import Subject
+from sqlalchemy import Integer, String, Date, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from database.database import Base
 
-class Score(SQLModel, table=True):
-    score_id: Optional[int] = Field(default=None, primary_key=True)
-    student_id: int = Field(foreign_key="student.id")
-    subject_id: int = Field(foreign_key="subject.id")
-    score: int = Field(nullable=False)
-    date: datetime.date = Field(nullable=False)
 
-    student: Student = Relationship(back_populates="scores")  
-    subject: Subject = Relationship(back_populates="scores")
+class Score(Base):
+    __tablename__ = "score"
+
+    score_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    student_id: Mapped[int] = mapped_column(Integer, ForeignKey("student.student_id"), primary_key=True, autoincrement=False)
+    subject_id: Mapped[int] = mapped_column(Integer, ForeignKey("subject.subject_id"), primary_key=True, autoincrement=False)
+    score: Mapped[int] = mapped_column(Integer)
+    date: Mapped[str] = mapped_column(Date)
+
+    student = relationship("Student", back_populates="scores")
+    subject = relationship("Subject", back_populates="scores")

@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, String, Date
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.database import Base
 class Student(Base):
     __tablename__ = "student" 
@@ -9,5 +9,5 @@ class Student(Base):
     birthdate: Mapped[str] = mapped_column(Date)
     class_: Mapped[str] = mapped_column(String(255))
 
-    class Config:
-        from_attributes = True
+    scores = relationship("Score", back_populates="student", cascade="all, delete-orphan")
+    
