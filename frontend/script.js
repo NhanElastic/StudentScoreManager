@@ -33,10 +33,11 @@ async function getStudents() {
 }
 
 async function createStudent(student) {
-    return await fetchAPI("/api/students/add", "POST", {
+    return await fetchAPI("/students/add", "POST", {
+        student_id: student.id,
         name: student.name,
-        class_name: student.class,
-        dob: student.dob,
+        class_: student.class,
+        birthdate: student.dob,
     });
 }
 
