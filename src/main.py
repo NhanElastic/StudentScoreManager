@@ -38,7 +38,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Register Routers
 app.include_router(student_controller.router)
 app.include_router(subject_controller.router)

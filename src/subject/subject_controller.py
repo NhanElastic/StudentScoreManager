@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 
 router = APIRouter(
-    prefix="/subjects",
+    prefix="/api/subjects",
     tags=["subjects"],
     responses={404: {"description": "Not found"}},
 )

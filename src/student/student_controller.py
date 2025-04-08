@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from student.student_schema import StudentSchema
 
 router = APIRouter(
-    prefix="/students",
+    prefix="/api/students",
     tags=["students"],
     responses={404: {"description": "Not found"}},
 )

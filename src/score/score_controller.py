@@ -6,7 +6,7 @@ from database.database import get_db
 from score.score_schema import ScoreSchema
 
 router = APIRouter(
-    prefix="/scores",
+    prefix="/api/scores",
     tags=["scores"],
     responses={404: {"description": "Not found"}},
 )

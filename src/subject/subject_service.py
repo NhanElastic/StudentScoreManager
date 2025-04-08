@@ -1,42 +1,29 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from subject.subject_model import Subject
+from subject.subject_repository import SubjectRepository
 
 class SubjectService:
     def __init__(self, db: AsyncSession):
-        self.db = db
+        self.repository = SubjectRepository(db)
+
+    async def get_subjects(self):
+        return await self.repository.get_all()
 
     async def add_subject(self, subject_id: int, name: str, amount: int):
-        subject = Subject(subject_id=subject_id, name=name, amount=amount)
-        self.db.add(subject)
-        await self.db.commit()
-        await self.db.refresh(subject)
-        return subject
-    
+        new_subject = Subject(subject_id=subject_id, name=name, amount=amount)
+        return await self.repository.add(new_subject)
+
     async def remove_subject(self, subject_id: int):
-        result = await self.db.execute(select(Subject).filter(Subject.subject_id == subject_id))
-        subject = result.scalars().first()
+        subject = await self.repository.get_by_id(subject_id)
         if subject:
-            await self.db.delete(subject)
-            await self.db.commit()
+            await self.repository.delete(subject)
         return subject
-    
+
     async def update(self, subject_id: int, name: str, amount: int):
-        result = await self.db.execute(select(Subject).filter(Subject.subject_id == subject_id))
-        subject = result.scalars().first()
+        subject = await self.repository.get_by_id(subject_id)
         if not subject:
             return None
         
-        if name:
-            subject.name = name
-        if amount:
-            subject.amount = amount
-
-        await self.db.commit()
-        await self.db.refresh(subject)
-        return subject
-    
-    async def get_subjects(self):
-        result = await self.db.execute(select(Subject))
-        subjects = result.scalars().fetchall()
-        return subjects
+        subject.name = name
+        subject.amount = amount
+        return await self.repository.update(subject)
