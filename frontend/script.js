@@ -3,6 +3,9 @@ let currentItemType = null;
 let isAdding = false;
 
 const API_BASE = "http://localhost:8000";
+const STUDENT_SUBROUTE = 'students'
+const SUBJECT_SUBROUTE = 'subjects'
+const SCORE_SUBROUTE = 'scores'
 
 async function fetchAPI(endpoint, method = "GET", data = null) {
     console.log(`Making ${method} request to ${endpoint}`);
@@ -29,11 +32,11 @@ async function fetchAPI(endpoint, method = "GET", data = null) {
 
 // Student API functions
 async function getStudents() {
-    return await fetchAPI("/api/students/list");
+    return await fetchAPI(`/${STUDENT_SUBROUTE}/list`);
 }
 
 async function createStudent(student) {
-    return await fetchAPI("/students/add", "POST", {
+    return await fetchAPI(`/${STUDENT_SUBROUTE}/add`, "POST", {
         student_id: student.id,
         name: student.name,
         class_: student.class,
@@ -42,11 +45,11 @@ async function createStudent(student) {
 }
 
 async function updateStudent(id, updates) {
-    return await fetchAPI(`/api/students/${id}`, "PUT", updates);
+    return await fetchAPI(`/${STUDENT_SUBROUTE}/${id}`, "PUT", updates);
 }
 
 async function deleteStudent(id) {
-    return await fetchAPI(`/api/students/${id}`, "DELETE");
+    return await fetchAPI(`/${STUDENT_SUBROUTE}/${id}`, "DELETE");
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
