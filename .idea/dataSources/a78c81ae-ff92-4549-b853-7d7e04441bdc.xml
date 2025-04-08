@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="@cluster0.tlvbz.mongodb.net">
+  <database-model serializer="dbm" dbms="MONGO" family-id="MONGO" format-version="4.53">
+    <root id="1">
+      <ServerVersion>8.0.5</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="admin"/>
+    <schema id="3" parent="1" name="local"/>
+    <schema id="4" parent="1" name="sample_airbnb"/>
+    <schema id="5" parent="1" name="sample_analytics"/>
+    <schema id="6" parent="1" name="sample_geospatial"/>
+    <schema id="7" parent="1" name="sample_guides"/>
+    <schema id="8" parent="1" name="sample_mflix"/>
+    <schema id="9" parent="1" name="sample_restaurants"/>
+    <schema id="10" parent="1" name="sample_supplies"/>
+    <schema id="11" parent="1" name="sample_training"/>
+    <schema id="12" parent="1" name="sample_weatherdata"/>
+    <schema id="13" parent="1" name="test">
+      <Current>1</Current>
+      <LastIntrospectionLocalTimestamp>2025-04-01.04:22:46</LastIntrospectionLocalTimestamp>
+    </schema>
+    <table id="14" parent="13" name="academics"/>
+    <table id="15" parent="13" name="activities"/>
+    <table id="16" parent="13" name="categories"/>
+    <table id="17" parent="13" name="cdvqstatuses"/>
+    <table id="18" parent="13" name="cdvqteams"/>
+    <table id="19" parent="13" name="events"/>
+    <table id="20" parent="13" name="media"/>
+    <table id="21" parent="13" name="payload-locked-documents"/>
+    <table id="22" parent="13" name="payload-migrations"/>
+    <table id="23" parent="13" name="payload-preferences"/>
+    <table id="24" parent="13" name="posts"/>
+    <table id="25" parent="13" name="users"/>
+    <column id="26" parent="14" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="27" parent="14" name="__v">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="28" parent="14" name="createdAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="29" parent="14" name="date">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="30" parent="14" name="location">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="31" parent="14" name="name">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="32" parent="14" name="updatedAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <index id="33" parent="14" name="_id_">
+      <ColNames>_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="34" parent="14" name="createdAt_1">
+      <ColNames>createdAt</ColNames>
+    </index>
+    <index id="35" parent="14" name="updatedAt_1">
+      <ColNames>updatedAt</ColNames>
+    </index>
+    <column id="36" parent="15" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="37" parent="15" name="__v">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="38" parent="15" name="createdAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="39" parent="15" name="date">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="40" parent="15" name="location">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="41" parent="15" name="name">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="42" parent="15" name="updatedAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <index id="43" parent="15" name="_id_">
+      <ColNames>_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="44" parent="15" name="createdAt_1">
+      <ColNames>createdAt</ColNames>
+    </index>
+    <index id="45" parent="15" name="updatedAt_1">
+      <ColNames>updatedAt</ColNames>
+    </index>
+    <column id="46" parent="16" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="47" parent="16" name="__v">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="48" parent="16" name="createdAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="49" parent="16" name="date">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="50" parent="16" name="location">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="51" parent="16" name="name">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="52" parent="16" name="type">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="53" parent="16" name="updatedAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <index id="54" parent="16" name="_id_">
+      <ColNames>_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="55" parent="16" name="name_1">
+      <ColNames>name</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="56" parent="16" name="createdAt_1">
+      <ColNames>createdAt</ColNames>
+    </index>
+    <index id="57" parent="16" name="updatedAt_1">
+      <ColNames>updatedAt</ColNames>
+    </index>
+    <column id="58" parent="19" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="59" parent="19" name="__v">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="60" parent="19" name="createdAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="61" parent="19" name="date">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="62" parent="19" name="location">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="63" parent="19" name="name">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="64" parent="19" name="updatedAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <index id="65" parent="19" name="_id_">
+      <ColNames>_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="66" parent="19" name="createdAt_1">
+      <ColNames>createdAt</ColNames>
+    </index>
+    <index id="67" parent="19" name="updatedAt_1">
+      <ColNames>updatedAt</ColNames>
+    </index>
+    <column id="68" parent="23" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="69" parent="23" name="__v">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="70" parent="23" name="createdAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="71" parent="23" name="key">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="72" parent="23" name="updatedAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="73" parent="23" name="user">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="74" parent="23" name="user.relationTo">
+      <Position>2</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="75" parent="23" name="user.value">
+      <Position>3</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="76" parent="23" name="value">
+      <Position>4</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="77" parent="23" name="value.columns">
+      <Position>5</Position>
+      <StoredType>list|4999545s</StoredType>
+    </column>
+    <column id="78" parent="23" name="value.columns.accessor">
+      <Position>6</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="79" parent="23" name="value.columns.active">
+      <Position>7</Position>
+      <StoredType>Boolean|12s</StoredType>
+    </column>
+    <column id="80" parent="23" name="value.limit">
+      <Position>8</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="81" parent="23" name="value.open">
+      <Position>9</Position>
+      <StoredType>Boolean|12s</StoredType>
+    </column>
+    <column id="82" parent="23" name="value.sort">
+      <Position>10</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <index id="83" parent="23" name="_id_">
+      <ColNames>_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="84" parent="23" name="createdAt_1">
+      <ColNames>createdAt</ColNames>
+    </index>
+    <index id="85" parent="23" name="key_1">
+      <ColNames>key</ColNames>
+    </index>
+    <index id="86" parent="23" name="updatedAt_1">
+      <ColNames>updatedAt</ColNames>
+    </index>
+    <index id="87" parent="23" name="user_1">
+      <ColNames>user</ColNames>
+    </index>
+    <column id="88" parent="24" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="89" parent="24" name="author">
+      <Position>1</Position>
+      <StoredType>Array|2003s</StoredType>
+    </column>
+    <column id="90" parent="24" name="image">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="91" parent="24" name="meta">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="92" parent="24" name="pinned">
+      <Position>1</Position>
+      <StoredType>Boolean|12s</StoredType>
+    </column>
+    <column id="93" parent="24" name="status">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="94" parent="24" name="updatedAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="95" parent="24" name="__v">
+      <Position>2</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="96" parent="24" name="category">
+      <Position>2</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="97" parent="24" name="meta.description">
+      <Position>2</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="98" parent="24" name="publishedAt">
+      <Position>2</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="99" parent="24" name="category.relationTo">
+      <Position>3</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="100" parent="24" name="tag">
+      <Position>3</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="101" parent="24" name="category.value">
+      <Position>4</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="102" parent="24" name="tag.relationTo">
+      <Position>4</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="103" parent="24" name="categoryType">
+      <Position>5</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="104" parent="24" name="tag.value">
+      <Position>5</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="105" parent="24" name="content">
+      <Position>6</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="106" parent="24" name="title">
+      <Position>6</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="107" parent="24" name="createdAt">
+      <Position>7</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <index id="108" parent="24" name="_id_">
+      <ColNames>_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="109" parent="24" name="updatedAt_1">
+      <ColNames>updatedAt</ColNames>
+    </index>
+    <index id="110" parent="24" name="createdAt_1">
+      <ColNames>createdAt</ColNames>
+    </index>
+    <column id="111" parent="25" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="112" parent="25" name="__v">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="113" parent="25" name="createdAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="114" parent="25" name="email">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="115" parent="25" name="loginAttempts">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="116" parent="25" name="name">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="117" parent="25" name="role">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="118" parent="25" name="updatedAt">
+      <Position>1</Position>
+      <StoredType>ISODate|91s</StoredType>
+    </column>
+    <column id="119" parent="25" name="hash">
+      <Position>2</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="120" parent="25" name="salt">
+      <Position>2</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <index id="121" parent="25" name="_id_">
+      <ColNames>_id</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="122" parent="25" name="email_1">
+      <ColNames>email</ColNames>
+      <Unique>1</Unique>
+    </index>
+    <index id="123" parent="25" name="createdAt_1">
+      <ColNames>createdAt</ColNames>
+    </index>
+    <index id="124" parent="25" name="updatedAt_1">
+      <ColNames>updatedAt</ColNames>
+    </index>
+  </database-model>
+</dataSource>
