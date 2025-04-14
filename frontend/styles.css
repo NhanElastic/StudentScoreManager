@@ -135,12 +135,7 @@ tr:hover {
 
 .add-row {
     background-color: #f8f9fa;
-    cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.add-row:hover {
-    background-color: #e3e7eb;
 }
 
 .add-row td {
@@ -153,10 +148,11 @@ tr:hover {
     margin-right: 5px;
 }
 
-/* Actions Column */
 .actions-cell {
     width: 50px;
     text-align: center;
+    position: relative;
+    padding: 0 8px;
 }
 
 .actions-menu {
@@ -175,51 +171,111 @@ tr:hover {
     background-color: #ecf0f1;
 }
 
+.icon-button {
+    background: none;
+    border: none;
+    padding: 6px;
+    margin: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: inherit;
+}
+
+.icon-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+}
+
+.kebab-icon {
+    fill: #666;
+    transition: transform 0.2s ease;
+    width: 20px;
+    height: 20px;
+}
+
+.icon-button:hover .kebab-icon {
+    transform: scale(1.1);
+    fill: #333;
+}
+
 .menu-content {
     display: none;
     position: absolute;
     right: 0;
     top: 100%;
-    background-color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    border-radius: 6px;
-    z-index: 100;
     min-width: 120px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
     overflow: hidden;
 }
 
+.actions-cell.active .menu-content {
+    display: block;
+}
+
 .menu-content button {
+    display: block;
     width: 100%;
-    padding: 8px 15px;
-    border: none;
-    background: none;
+    padding: 8px 12px;
     text-align: left;
+    background: none;
+    border: none;
     cursor: pointer;
-    transition: background-color 0.2s;
-    font-size: 13px;
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
 
 .menu-content button:hover {
-    background-color: #f5f7fa;
+    background-color: #f5f5f5;
 }
 
-.menu-content button i {
-    margin-right: 8px;
-    width: 15px;
-    text-align: center;
+.menu-content button:first-child {
+    color: #1a73e8;
 }
 
-.edit-mode {
-    background-color: #fff9e6;
+.menu-content button:last-child {
+    color: #d32f2f;
+    border-top: 1px solid #f0f0f0;
 }
 
-.edit-mode input,
-.edit-mode select {
+/* Edit Mode Styles */
+tr.edit-mode {
+    background-color: #fffde7;
+}
+
+tr.edit-mode td {
+    padding: 8px !important;
+}
+
+tr.edit-mode input {
     width: 100%;
-    padding: 8px;
+    padding: 6px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    box-sizing: border-box;
+}
+
+.save-btn,
+.cancel-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    margin: 0 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.save-btn:hover {
+    background-color: #e8f5e9;
+}
+
+.cancel-btn:hover {
+    background-color: #ffebee;
 }
 
 .confirmation-modal {
@@ -272,6 +328,81 @@ tr:hover {
 
 .modal-buttons button:last-child:hover {
     background-color: #d5dbdb;
+}
+
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    padding: 15px 20px;
+    border-radius: 6px;
+    color: white;
+    background-color: #323232;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 350px;
+    animation: slideIn 0.3s ease-out forwards;
+    transform: translateX(120%);
+    position: relative;
+    overflow: hidden;
+}
+
+.notification::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.4);
+    width: 100%;
+    animation: progressBar 5s linear forwards;
+}
+
+.notification.warning {
+    background-color: #ff9800;
+}
+
+.notification.error {
+    background-color: #f44336;
+}
+
+.notification.success {
+    background-color: #4caf50;
+}
+
+.notification.info {
+    background-color: #2196f3;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    margin-left: 15px;
+    font-size: 18px;
+    padding: 0;
+}
+
+@keyframes slideIn {
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes progressBar {
+    to {
+        width: 0%;
+    }
 }
 
 .overlay {

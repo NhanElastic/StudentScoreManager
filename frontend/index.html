@@ -48,10 +48,7 @@
                             <tr
                                 class="add-row"
                                 onclick="showAddForm('student')"
-                            >
-                                <td><i class="fas fa-plus"></i></td>
-                                <td colspan="4">Click to add new student</td>
-                            </tr>
+                            ></tr>
                         </tbody>
                     </table>
                 </div>
@@ -83,10 +80,7 @@
                             <tr
                                 class="add-row"
                                 onclick="showAddForm('subject')"
-                            >
-                                <td><i class="fas fa-plus"></i></td>
-                                <td colspan="3">Click to add new subject</td>
-                            </tr>
+                            ></tr>
                         </tbody>
                     </table>
                 </div>
@@ -117,26 +111,53 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="add-row" onclick="showAddForm('score')">
-                                <td><i class="fas fa-plus"></i></td>
-                                <td colspan="5">Click to add new score</td>
-                            </tr>
+                            <tr
+                                class="add-row"
+                                onclick="showAddForm('score')"
+                            ></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
-        <!-- Confirmation Modal -->
-        <div class="confirmation-modal" id="deleteModal" style="display: none">
-            <p id="modalMessage">Are you sure you want to delete this item?</p>
-            <div class="modal-buttons">
-                <button onclick="confirmDelete(true)">Yes</button>
-                <button onclick="confirmDelete(false)">Cancel</button>
+        <div
+            id="overlay"
+            style="
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+            "
+        ></div>
+        <div
+            id="deleteModal"
+            style="
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                z-index: 1001;
+            "
+        >
+            <div class="modal-content">
+                <p>Are you sure you want to delete this item?</p>
+                <div class="modal-buttons">
+                    <button onclick="confirmDelete(false)">Cancel</button>
+                    <button class="delete-btn" onclick="confirmDelete(true)">
+                        Delete
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="overlay" id="overlay" style="display: none"></div>
-
+        <div id="notification-container" class="notification-container"></div>
         <script src="script.js"></script>
     </body>
 </html>
