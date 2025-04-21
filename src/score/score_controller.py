@@ -66,8 +66,8 @@ async def add_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_db))
     except Exception as e:
         return {"message": "An unexpected error occurred", "error": str(e)}
 
-@router.delete("/remove")
-async def remove_score(score_id: dict, db: AsyncSession = Depends(get_db)):
+@router.delete("/remove/{score_id}")
+async def remove_score(score_id: int, db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
         score = await score_service.remove_score(score_id['score_id'])
