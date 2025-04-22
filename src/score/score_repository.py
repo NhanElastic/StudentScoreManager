@@ -96,3 +96,12 @@ class ScoreRepository:
             return result.scalars().all()
         except SQLAlchemyError:
             return {"status": "error", "message": "Failed to fetch top scores"}
+        
+    async def calculate_all_avg_scores(self):
+        try:
+            result = await self.db.execute(
+                select(Score.student_id, func.avg(Score.score)).group_by(Score.student_id)
+            )
+            return result.mappings().all()
+        except SQLAlchemyError:
+            return {"status": "error", "message": "Failed to calculate average scores"}

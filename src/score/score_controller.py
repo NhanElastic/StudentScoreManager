@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from score.score_service import ScoreService
 from database.database import get_db
-from score.score_schema import ScoreSchema
+from score.score_schema import ScoreSchema, StudentScoreSchema
+from fastapi.responses import JSONResponse
 
 router = APIRouter(
     prefix="/api/scores",
@@ -11,45 +12,55 @@ router = APIRouter(
 )
 
 @router.get("/student")
-async def get_student_scores(student_id: dict, isAscending: bool = False, db: AsyncSession = Depends(get_db)):
+async def get_student_scores(student_data: StudentScoreSchema, db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
+        student_id = student_data.student_id
+        isAscending = student_data.isAscending
+        if student_id is None:
+            raise HTTPException(status_code=400, detail="Student ID is required")
         scores = await score_service.get_student_scores(student_id, isAscending)
         if scores is None:
-            raise HTTPException(status_code=404, detail="Scores not found")
-        return scores
+            raise HTTPException(status_code=404, detail="No scores found for the student")
+        return JSONResponse(content={"data": scores}, status_code=200)
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
-
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
+    
 @router.get("/list")
 async def get_all_scores(db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
         scores = await score_service.get_all_scores()
-        return scores
+        if scores is None:
+            raise HTTPException(status_code=404, detail="No scores found")
+        return JSONResponse(content={"data": scores}, status_code=200)
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
-
-@router.get("/avg")
-async def get_avg_score(student_id: dict, db: AsyncSession = Depends(get_db)):
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
+    
+@router.get("/avg/{student_id}")
+async def get_avg_score(student_id: int, db: AsyncSession = Depends(get_db)):
     try:
+        if student_id is None:
+            raise HTTPException(status_code=400, detail="Student ID is required")
         score_service = ScoreService(db)
         scores = await score_service.get_avg_score(student_id)
         if scores is None:
             raise HTTPException(status_code=404, detail="No scores found for the student")
-        return scores
+        return JSONResponse(content={"data": scores}, status_code=200)
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
-
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
+    
 @router.get("/max_subject_scores")
 async def max_score_subjects(db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
         scores = await score_service.max_score_subjects()
-        return scores
+        if scores is None:
+            raise HTTPException(status_code=404, detail="No scores found")
+        return JSONResponse(content={"data": scores}, status_code=200)
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
-
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
+    
 @router.post("/add")
 async def add_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_db)):
     try:
@@ -62,22 +73,24 @@ async def add_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_db))
         )
         if score is None:
             raise HTTPException(status_code=400, detail="Failed to add score")
-        return {"message": "Score added successfully"}
+        return JSONResponse(content={"message": "Score added successfully", "data": score}, status_code=201)
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
 
 @router.delete("/remove/{score_id}")
 async def remove_score(score_id: int, db: AsyncSession = Depends(get_db)):
     try:
+        if score_id is None:
+            raise HTTPException(status_code=400, detail="Score ID is required")
         score_service = ScoreService(db)
         score = await score_service.remove_score(score_id['score_id'])
         if score:
-            return {"message": "Score removed successfully"}
+            return JSONResponse(content={"message": "Score removed successfully"}, status_code=200)
         else:
             raise HTTPException(status_code=404, detail="Score not found")
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
-
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
+    
 @router.put("/update")
 async def update_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_db)):
     try:
@@ -90,19 +103,33 @@ async def update_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_d
             subject_id=score_data.subject_id
         )
         if score:
-            return {"message": "Score updated successfully"}
+            return JSONResponse(content={"message": "Score updated successfully", "data": score}, status_code=200)
         else:
             raise HTTPException(status_code=404, detail="Score not found")
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
 
 @router.get("/top/{limit}")
 async def get_top_scores(limit: int = 10, db: AsyncSession = Depends(get_db)):
     try:
+        if limit is None or limit <= 0:
+            raise HTTPException(status_code=400, detail="Limit is required and must be an positive integer")
         score_service = ScoreService(db)
         scores = await score_service.get_top_scores(limit)
         if scores is None:
             raise HTTPException(status_code=404, detail="No scores found")
-        return scores
+        return JSONResponse(content={"data": scores}, status_code=200)
     except Exception as e:
-        return {"message": "An unexpected error occurred", "error": str(e)}
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
+    
+@router.get("/avg_all")
+async def calculate_all_avg_scores(db: AsyncSession = Depends(get_db)):
+    try:
+        score_service = ScoreService(db)
+        scores = await score_service.calculate_all_avg_scores()
+        if scores is None:
+            raise HTTPException(status_code=404, detail="No scores found")
+        return JSONResponse(content={"data": scores}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
+    

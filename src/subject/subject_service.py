@@ -2,14 +2,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from subject.subject_model import Subject
 from subject.subject_repository import SubjectRepository
 from sqlalchemy.exc import SQLAlchemyError
+from fastapi.responses import JSONResponse
 
 class SubjectService:
     def __init__(self, db: AsyncSession):
         self.repository = SubjectRepository(db)
 
-    async def get_subjects(self):
+    async def get_all_subjects(self):
         try:
-            return await self.repository.get_all()
+            subjects = await self.repository.get_all()
+            return JSONResponse(content={"data": subjects}, status_code=200)
         except Exception as e:
             raise Exception(f"Error fetching subjects: {str(e)}")
 
@@ -20,7 +22,8 @@ class SubjectService:
                 raise ValueError(f"Subject with ID {subject_id} already exists.")
             
             new_subject = Subject(subject_id=subject_id, name=name, amount=amount)
-            return await self.repository.add(new_subject)
+            added_subject = await self.repository.add(new_subject)
+            return JSONResponse(content={"message": "Subject added successfully", "data": added_subject}, status_code=201)
         except ValueError as e:
             raise e  
         except SQLAlchemyError as e:
@@ -32,7 +35,7 @@ class SubjectService:
             if not subject:
                 return {"message": "Subject not found"}
             await self.repository.delete(subject)
-            return {"message": "Subject removed successfully"}
+            return JSONResponse(content={"message": "Subject removed successfully"}, status_code=200)
         except SQLAlchemyError as e:
             raise Exception(f"Error deleting subject: {str(e)}")
 
@@ -45,6 +48,6 @@ class SubjectService:
             subject.name = name
             subject.amount = amount
             updated_subject = await self.repository.update(subject)
-            return updated_subject
+            return JSONResponse(content={"message": "Subject updated successfully", "data": updated_subject}, status_code=200)
         except SQLAlchemyError as e:
             raise Exception(f"Error updating subject: {str(e)}")

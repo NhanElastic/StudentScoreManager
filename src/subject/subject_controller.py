@@ -14,8 +14,9 @@ router = APIRouter(
 async def get_subjects(db: AsyncSession = Depends(get_db)):
     try:
         subject_service = SubjectService(db)
-        subjects = await subject_service.get_subjects()
-        return [SubjectSchema.model_validate(subject) for subject in subjects]
+        subjects = await subject_service.get_all_subjects()
+        lst =  [SubjectSchema.model_validate(subject) for subject in subjects]
+        return {"data": lst}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
@@ -37,6 +38,8 @@ async def add_subject(subject_data: SubjectSchema, db: AsyncSession = Depends(ge
 @router.delete("/remove/{subject_id}")
 async def remove_subject(subject_id: int, db: AsyncSession = Depends(get_db)):
     try:
+        if subject_id is None:
+            raise HTTPException(status_code=400, detail="Subject ID is required")
         subject_service = SubjectService(db)
         subject = await subject_service.remove_subject(subject_id)
         if subject:

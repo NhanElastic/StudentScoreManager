@@ -11,3 +11,10 @@ class ScoreSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class StudentScoreSchema(BaseModel):
+    student_id: int
+    isAscending: bool = True
+
+    class Config:
+        from_attributes = True
