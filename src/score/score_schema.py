@@ -5,7 +5,7 @@ import datetime
 class ScoreSchema(BaseModel):
     student_id: Optional[int] = None
     subject_id: Optional[int] = None
-    score_id: int
+    score_id: Optional[int] = None
     score: Optional[int] = None
     date: Optional[datetime.date] = None
 
@@ -14,7 +14,7 @@ class ScoreSchema(BaseModel):
 
 class StudentScoreSchema(BaseModel):
     student_id: int
-    isAscending: bool = True
+    isAscending: bool
 
     class Config:
         from_attributes = True

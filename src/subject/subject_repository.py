@@ -10,37 +10,52 @@ class SubjectRepository:
     async def get_all(self):
         try:
             result = await self.db.execute(select(Subject))
-            return result.scalars().all()
+            return {"status": "success", "data": result.scalars().all()}            
         except SQLAlchemyError as e:
-            raise Exception(f"Error fetching all subjects: {str(e)}")
+            return {"status": "error", "message": "Failed to fetch subjects", "error": str(e)}
 
     async def get_by_id(self, subject_id: int):
         try:
             result = await self.db.execute(select(Subject).filter(Subject.subject_id == subject_id))
-            return result.scalars().first()
+            subject = result.scalars().first()
+            if subject:
+                return {"status": "success", "data": subject}
+            return {"status": "error", "message": "Subject not found"}
         except SQLAlchemyError as e:
-            raise Exception(f"Error fetching subject by ID: {str(e)}")
+            return {"status": "error", "message": "Failed to fetch subject by ID", "error": str(e)}
 
     async def add(self, subject: Subject):
         try:
             self.db.add(subject)
             await self.db.commit()
             await self.db.refresh(subject)
-            return subject
+            return {"status": "success", "data": subject}
         except SQLAlchemyError as e:
-            raise Exception(f"Error adding subject: {str(e)}")
-
+            await self.db.rollback()
+            return {"status": "error", "message": "Failed to add subject", "error": str(e)}
+        
     async def delete(self, subject: Subject):
         try:
             await self.db.delete(subject)
             await self.db.commit()
+            return {"status": "success", "message": "Subject deleted"}
         except SQLAlchemyError as e:
-            raise Exception(f"Error deleting subject: {str(e)}")
+            await self.db.rollback()
+            return {"status": "error", "message": "Failed to delete subject", "error": str(e)}
 
     async def update(self, subject: Subject):
         try:
             await self.db.commit()
             await self.db.refresh(subject)
-            return subject
+            return {"status": "success", "data": subject}
         except SQLAlchemyError as e:
-            raise Exception(f"Error updating subject: {str(e)}")
+            await self.db.rollback()
+            return {"status": "error", "message": "Failed to update subject", "error": str(e)}
+
+    async def is_subject_name_exists(self, name: str):
+        try:
+            result = await self.db.execute(select(Subject).filter(Subject.name == name))
+            return {"status": "success", "exists": result.scalars().first() is not None}
+        except SQLAlchemyError as e:
+            return {"status": "error", "message": "Failed to check subject name", "error": str(e)}
+        

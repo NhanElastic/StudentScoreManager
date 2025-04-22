@@ -2,7 +2,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from subject.subject_model import Subject
 from subject.subject_repository import SubjectRepository
 from sqlalchemy.exc import SQLAlchemyError
-from fastapi.responses import JSONResponse
 
 class SubjectService:
     def __init__(self, db: AsyncSession):
@@ -10,44 +9,46 @@ class SubjectService:
 
     async def get_all_subjects(self):
         try:
-            subjects = await self.repository.get_all()
-            return JSONResponse(content={"data": subjects}, status_code=200)
+            return await self.repository.get_all()
         except Exception as e:
             raise Exception(f"Error fetching subjects: {str(e)}")
 
     async def add_subject(self, subject_id: int, name: str, amount: int):
         try:
-            existing_subject = await self.repository.get_by_id(subject_id)
-            if existing_subject:
-                raise ValueError(f"Subject with ID {subject_id} already exists.")
+            is_existing_id = await self.repository.get_by_id(subject_id)
+            is_existing_name = await self.repository.is_subject_name_exists(name)
+            if is_existing_id.get("data") or is_existing_name.get("exists"):
+                return {"status": "error", "message": "Subject already exists"}
             
-            new_subject = Subject(subject_id=subject_id, name=name, amount=amount)
-            added_subject = await self.repository.add(new_subject)
-            return JSONResponse(content={"message": "Subject added successfully", "data": added_subject}, status_code=201)
-        except ValueError as e:
-            raise e  
+            subject = Subject(subject_id=subject_id, name=name, amount=amount)
+            return await self.repository.add(subject)
         except SQLAlchemyError as e:
             raise Exception(f"Error adding subject: {str(e)}")
 
     async def remove_subject(self, subject_id: int):
         try:
             subject = await self.repository.get_by_id(subject_id)
-            if not subject:
-                return {"message": "Subject not found"}
-            await self.repository.delete(subject)
-            return JSONResponse(content={"message": "Subject removed successfully"}, status_code=200)
+            if not subject.get("data"):
+                return {"status": "error", "message": "Subject not found"}
+            
+            return await self.repository.delete(subject.get("data"))
         except SQLAlchemyError as e:
             raise Exception(f"Error deleting subject: {str(e)}")
 
     async def update(self, subject_id: int, name: str, amount: int):
         try:
             subject = await self.repository.get_by_id(subject_id)
-            if not subject:
-                return {"message": "Subject not found"}
+            if not subject.get("data"):
+                return {"status": "error", "message": "Subject not found"}
             
-            subject.name = name
-            subject.amount = amount
+            subject = subject.get("data")
+            subject.name = name if name else subject.name
+            subject.amount = amount if amount else subject.amount
+            
             updated_subject = await self.repository.update(subject)
-            return JSONResponse(content={"message": "Subject updated successfully", "data": updated_subject}, status_code=200)
+            return updated_subject
         except SQLAlchemyError as e:
             raise Exception(f"Error updating subject: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Unexpected error: {str(e)}")
+        

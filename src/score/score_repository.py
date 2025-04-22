@@ -10,16 +10,15 @@ class ScoreRepository:
     async def get_all(self):
         try:
             result = await self.db.execute(select(Score))
-            return result.scalars().all()
+            return {"status": "success", "data": result.scalars().all()}
         except SQLAlchemyError:
             return {"status": "error", "message": "Failed to fetch scores"}
 
     async def get_by_student(self, student_id: int, ascending: bool):
         try:
-            query = select(Score).filter(Score.student_id == student_id)
-            query = query.order_by(Score.date.asc() if ascending else Score.date.desc())
+            query = select(Score).filter(Score.student_id == student_id).order_by(Score.date.asc() if ascending else Score.date.desc())
             result = await self.db.execute(query)
-            return result.scalars().all()
+            return {"status": "success", "data": result.scalars().all()}
         except SQLAlchemyError:
             return {"status": "error", "message": "Failed to fetch student's scores"}
 
@@ -28,7 +27,7 @@ class ScoreRepository:
             result = await self.db.execute(
                 select(func.avg(Score.score)).filter(Score.student_id == student_id)
             )
-            return result.scalar()
+            return {"status": "success", "data": result.scalar()}
         except SQLAlchemyError:
             return {"status": "error", "message": "Failed to calculate average score"}
     async def get_max_score_subjects(self):
@@ -58,7 +57,7 @@ class ScoreRepository:
             self.db.add(score)
             await self.db.commit()
             await self.db.refresh(score)
-            return score
+            return {"status": "success", "data": score}
         except SQLAlchemyError:
             await self.db.rollback()
             return {"status": "error", "message": "Failed to add score"}
@@ -66,7 +65,10 @@ class ScoreRepository:
     async def get_by_id(self, score_id: int):
         try:
             result = await self.db.execute(select(Score).filter(Score.score_id == score_id))
-            return result.scalars().first()
+            score = result.scalars().first()
+            if score:
+                return {"status": "success", "data": score}
+            return {"status": "error", "message": "Score not found"}
         except SQLAlchemyError:
             return {"status": "error", "message": "Failed to fetch score by ID"}
 
@@ -83,7 +85,7 @@ class ScoreRepository:
         try:
             await self.db.commit()
             await self.db.refresh(score)
-            return score
+            return {"status": "success", "data": score}
         except SQLAlchemyError:
             await self.db.rollback()
             return {"status": "error", "message": "Failed to update score"}

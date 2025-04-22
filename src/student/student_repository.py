@@ -10,14 +10,14 @@ class StudentRepository:
     async def get_all(self):
         try:
             result = await self.db.execute(select(Student))
-            return result.scalars().all()
+            return {"status": "success", "data": result.scalars().all()}
         except SQLAlchemyError as e:
             return {"status": "error", "message": "Failed to fetch students", "error": str(e)}
 
     async def get_by_id(self, student_id: int):
         try:
             result = await self.db.execute(select(Student).filter(Student.student_id == student_id))
-            return result.scalars().first()
+            return {"status": "success", "data": result.scalars().first()}
         except SQLAlchemyError as e:
             return {"status": "error", "message": "Failed to fetch student by ID", "error": str(e)}
 
@@ -26,7 +26,7 @@ class StudentRepository:
             self.db.add(student)
             await self.db.commit()
             await self.db.refresh(student)
-            return student
+            return {"status": "success", "data": student}
         except SQLAlchemyError as e:
             await self.db.rollback()
             return {"status": "error", "message": "Failed to add student", "error": str(e)}
@@ -40,10 +40,11 @@ class StudentRepository:
             await self.db.rollback()
             return {"status": "error", "message": "Failed to delete student", "error": str(e)}
 
-    async def update(self):
+    async def update(self, student: Student):
         try:
             await self.db.commit()
-            return {"status": "success", "message": "Student updated"}
+            await self.db.refresh(student)
+            return {"status": "success", "data": student}
         except SQLAlchemyError as e:
             await self.db.rollback()
             return {"status": "error", "message": "Failed to update student", "error": str(e)}

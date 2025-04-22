@@ -5,6 +5,8 @@ from database.database import get_db
 from student.student_schema import StudentSchema
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
+from typing import List
+from fastapi.encoders import jsonable_encoder
 
 router = APIRouter(
     prefix="/api/students",
@@ -23,8 +25,12 @@ async def get_students(db: AsyncSession = Depends(get_db)):
     try:
         student_service = StudentService(db)
         students = await student_service.get_all_students()
-        lst = [StudentSchema.model_validate(student) for student in students]
-        return JSONResponse(content={"data": lst}, status_code=200)
+        if students.get("status") == "error":
+            raise HTTPException(status_code=500, detail=students.get("message"))
+        if not students.get("data"):
+            raise HTTPException(status_code=404, detail="No students found")
+        lst: List[StudentSchema] = [StudentSchema.model_validate(student) for student in students.get("data", [])]
+        return JSONResponse(content={"data" : jsonable_encoder(lst)}, status_code=200)
     except Exception as e:
         return await handle_exception(e)
 
@@ -38,20 +44,24 @@ async def add_student(student_data: StudentSchema, db: AsyncSession = Depends(ge
             birthdate=student_data.birthdate,
             class_=student_data.class_
         )
-        return JSONResponse(content={"message": "Student added successfully", "data": StudentSchema.model_validate(student)}, status_code=201)
+        if student.get("status") == "error":
+            raise HTTPException(status_code=500, detail=student.get("message"))
+        if not student.get("data"):
+            raise HTTPException(status_code=400, detail="Failed to add student")
+        validate_student = StudentSchema.model_validate(student.get("data"))
+        return JSONResponse(content={"message": "Student added successfully", "data": jsonable_encoder(validate_student)}, status_code=201)
     except Exception as e:
         return await handle_exception(e)
 
 @router.delete("/remove/{student_id}")
 async def remove_student(student_id: int, db: AsyncSession = Depends(get_db)):
     try:
-        if student_id is None:
-            raise HTTPException(status_code=400, detail="Student ID is required")
         student_service = StudentService(db)
         student = await student_service.remove_student(student_id)
-        if student:
-            return JSONResponse(content={"message": "Student removed successfully"}, status_code=200)
-        raise HTTPException(status_code=404, detail="Student not found")
+        if student.get("status") == "error":
+            raise HTTPException(status_code=500, detail=student.get("message"))
+        elif student.get("status") == "success":
+            return JSONResponse(content={"message": student.get("message")}, status_code=200)
     except Exception as e:
         return await handle_exception(e)
 
@@ -65,22 +75,31 @@ async def update_student(student_data: StudentSchema, db: AsyncSession = Depends
             birthdate=student_data.birthdate,
             class_=student_data.class_
         )
-        if student:
-            return JSONResponse(content={"message": "Student updated successfully", "data": StudentSchema.model_validate(student)}, status_code=200)
+        if student.get("status") == "error":
+            raise HTTPException(status_code=500, detail=student.get("message"))
+        elif student.get("status") == "success":
+            validate_student = StudentSchema.model_validate(student.get("data"))
+            return JSONResponse(content={"message": "Student updated successfully", "data": jsonable_encoder(validate_student)}, status_code=200)
         raise HTTPException(status_code=404, detail="Student not found")
+
     except Exception as e:
         return await handle_exception(e)
 
-@router.get("/student/{student_id}")
+@router.get("/get_by_id/{student_id}")
 async def get_student_by_id(student_id: int, db: AsyncSession = Depends(get_db)):
     try:
+        student_service = StudentService(db)
         if student_id is None:
             raise HTTPException(status_code=400, detail="Student ID is required")
-        student_service = StudentService(db)
+        
         student = await student_service.repo.get_by_id(student_id)
-        if not student:
+        if student.get("status") == "error":
+            raise HTTPException(status_code=500, detail=student.get("message"))
+        if not student.get("data"):
             raise HTTPException(status_code=404, detail="Student not found")
-        student =  StudentSchema.model_validate(student)
-        return JSONResponse(content={"data": student}, status_code=200)
+        student = student.get("data")
+        validate_student = StudentSchema.model_validate(student)
+        return JSONResponse(content={"message": "Student found", "data": jsonable_encoder(validate_student)}, status_code=200)
+    
     except Exception as e:
         return await handle_exception(e)
