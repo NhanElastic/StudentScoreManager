@@ -41,7 +41,7 @@ async def get_avg_score(student_id: dict, db: AsyncSession = Depends(get_db)):
     except Exception as e:
         return {"message": "An unexpected error occurred", "error": str(e)}
 
-@router.get("/max")
+@router.get("/max_subject_scores")
 async def max_score_subjects(db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
@@ -93,5 +93,16 @@ async def update_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_d
             return {"message": "Score updated successfully"}
         else:
             raise HTTPException(status_code=404, detail="Score not found")
+    except Exception as e:
+        return {"message": "An unexpected error occurred", "error": str(e)}
+
+@router.get("/top/{limit}")
+async def get_top_scores(limit: int = 10, db: AsyncSession = Depends(get_db)):
+    try:
+        score_service = ScoreService(db)
+        scores = await score_service.get_top_scores(limit)
+        if scores is None:
+            raise HTTPException(status_code=404, detail="No scores found")
+        return scores
     except Exception as e:
         return {"message": "An unexpected error occurred", "error": str(e)}

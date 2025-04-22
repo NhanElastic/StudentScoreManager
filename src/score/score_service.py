@@ -38,8 +38,8 @@ class ScoreService:
         try:
             max_scores = await self.repository.get_max_score_subjects()
             return {"status": "success", "data": max_scores}
-        except Exception:
-            return {"status": "error", "message": "Failed to fetch max scores by subject"}
+        except Exception as e:
+            return {"status": "error", "message": "Failed to fetch max scores by subject", "error": str(e)}
 
     async def add_score(self, student_id: int, subject_id: int, score: float, date: datetime.date):
         if not all([student_id, subject_id, score, date]):
@@ -79,3 +79,10 @@ class ScoreService:
             return {"status": "success", "data": updated_score}
         except Exception:
             return {"status": "error", "message": "Failed to update score"}
+
+    async def get_top_scores(self, limit: int = 10):
+        try:
+            top_scores = await self.repository.get_top_scores(limit)
+            return {"status": "success", "data": top_scores}
+        except Exception:
+            return {"status": "error", "message": "Failed to fetch top scores"}

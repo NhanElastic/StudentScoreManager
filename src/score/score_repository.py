@@ -31,15 +31,27 @@ class ScoreRepository:
             return result.scalar()
         except SQLAlchemyError:
             return {"status": "error", "message": "Failed to calculate average score"}
-
     async def get_max_score_subjects(self):
         try:
-            result = await self.db.execute(
-                select(Score.subject_id, func.max(Score.score)).group_by(Score.subject_id)
+            subquery = (
+                select(
+                    Score.score_id,
+                    Score.subject_id,
+                    Score.student_id,
+                    Score.score,
+                    func.rank().over(
+                        partition_by=Score.subject_id,
+                        order_by=Score.score.desc()
+                    ).label("rank")
+                ).subquery()
             )
-            return result.all()
-        except SQLAlchemyError:
-            return {"status": "error", "message": "Failed to fetch max scores by subject"}
+
+            result = await self.db.execute(
+                select(subquery).where(subquery.c.rank == 1)
+            )
+            return result.mappings().all()
+        except SQLAlchemyError as e:
+            return {"status": "error", "message": str(e)}
 
     async def add(self, score: Score):
         try:
@@ -75,3 +87,12 @@ class ScoreRepository:
         except SQLAlchemyError:
             await self.db.rollback()
             return {"status": "error", "message": "Failed to update score"}
+
+    async def get_top_scores(self, limit: int = 10):
+        try:
+            result = await self.db.execute(
+                select(Score).order_by(Score.score.desc()).limit(limit)
+            )
+            return result.scalars().all()
+        except SQLAlchemyError:
+            return {"status": "error", "message": "Failed to fetch top scores"}
