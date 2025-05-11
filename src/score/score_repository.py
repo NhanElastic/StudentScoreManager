@@ -8,59 +8,51 @@ class ScoreRepository:
         self.db = db
 
     async def get_all(self):
-        try:
-            result = await self.db.execute(select(Score))
-            return {"status": "success", "data": result.scalars().all()}
-        except SQLAlchemyError:
-            return {"status": "error", "message": "Failed to fetch scores"}
+        result = await self.db.execute(select(Score))
+        return result.scalars().all()
 
     async def get_by_student(self, student_id: int, ascending: bool):
-        try:
-            query = select(Score).filter(Score.student_id == student_id).order_by(Score.date.asc() if ascending else Score.date.desc())
-            result = await self.db.execute(query)
-            return {"status": "success", "data": result.scalars().all()}
-        except SQLAlchemyError:
-            return {"status": "error", "message": "Failed to fetch student's scores"}
+        if ascending:
+            result = await self.db.execute(
+                select(Score).filter(Score.student_id == student_id).order_by(Score.score.asc())
+            )
+        else:
+            result = await self.db.execute(
+                select(Score).filter(Score.student_id == student_id).order_by(Score.score.desc())
+            )
+        return result.scalars().all()
 
     async def get_avg_by_student(self, student_id: int):
-        try:
-            result = await self.db.execute(
-                select(func.avg(Score.score)).filter(Score.student_id == student_id)
-            )
-            return {"status": "success", "data": result.scalar()}
-        except SQLAlchemyError:
-            return {"status": "error", "message": "Failed to calculate average score"}
+        result = await self.db.execute(
+            select(func.avg(Score.score)).filter(Score.student_id == student_id)
+        )
+        return result.scalar_one_or_none()
+    
     async def get_max_score_subjects(self):
-        try:
-            subquery = (
-                select(
-                    Score.score_id,
-                    Score.subject_id,
-                    Score.student_id,
-                    Score.score,
-                    func.rank().over(
-                        partition_by=Score.subject_id,
-                        order_by=Score.score.desc()
-                    ).label("rank")
-                ).subquery()
-            )
+        subquery = (
+            select(
+                Score.score_id,
+                Score.subject_id,
+                Score.student_id,
+                Score.score,
+                func.rank().over(
+                    partition_by=Score.subject_id,
+                    order_by=Score.score.desc()
+                ).label("rank")
+            ).subquery()
+        )
 
-            result = await self.db.execute(
-                select(subquery).where(subquery.c.rank == 1)
-            )
-            return result.mappings().all()
-        except SQLAlchemyError as e:
-            return {"status": "error", "message": str(e)}
+        result = await self.db.execute(
+            select(subquery).where(subquery.c.rank == 1)
+        )
+        return result.mappings().all()
+        
 
-    async def add(self, score: Score):
-        try:
-            self.db.add(score)
-            await self.db.commit()
-            await self.db.refresh(score)
-            return {"status": "success", "data": score}
-        except SQLAlchemyError:
-            await self.db.rollback()
-            return {"status": "error", "message": "Failed to add score"}
+    async def add(self, score: Score) -> Score:
+        self.db.add(score)
+        await self.db.commit()
+        await self.db.refresh(score)
+        return score
 
     async def get_by_id(self, score_id: int):
         try:

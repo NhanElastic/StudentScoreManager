@@ -2,60 +2,62 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from subject.subject_model import Subject
 from sqlalchemy.exc import SQLAlchemyError
-
+from subject.subject_schema import SubjectSchema
 class SubjectRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
     async def get_all(self):
-        try:
-            result = await self.db.execute(select(Subject))
-            return {"status": "success", "data": result.scalars().all()}            
-        except SQLAlchemyError as e:
-            return {"status": "error", "message": "Failed to fetch subjects", "error": str(e)}
+        result = await self.db.execute(select(Subject))
+        return result.scalars().all()
 
     async def get_by_id(self, subject_id: int):
-        try:
-            result = await self.db.execute(select(Subject).filter(Subject.subject_id == subject_id))
-            subject = result.scalars().first()
-            if subject:
-                return {"status": "success", "data": subject}
-            return {"status": "error", "message": "Subject not found"}
-        except SQLAlchemyError as e:
-            return {"status": "error", "message": "Failed to fetch subject by ID", "error": str(e)}
+        result = await self.db.execute(
+            select(Subject).filter(Subject.subject_id == subject_id)
+        )
+        return result.scalar_one_or_none()
 
-    async def add(self, subject: Subject):
+    async def add(self, subject: SubjectSchema):
         try:
+            subject = Subject(**subject.model_dump())
+            is_existing = await self.get_by_id(subject.subject_id)
+            if is_existing:
+                raise ValueError("Subject with this ID already exists.")
+            
             self.db.add(subject)
             await self.db.commit()
             await self.db.refresh(subject)
-            return {"status": "success", "data": subject}
+            return subject
         except SQLAlchemyError as e:
             await self.db.rollback()
-            return {"status": "error", "message": "Failed to add subject", "error": str(e)}
+            print(f"Error adding subject: {e}")
+            return None
         
-    async def delete(self, subject: Subject):
+    async def delete(self, subject_id: int):
         try:
+            subject = await self.get_by_id(subject_id)
+            if not subject:
+                raise ValueError("Subject not found.")
             await self.db.delete(subject)
             await self.db.commit()
-            return {"status": "success", "message": "Subject deleted"}
+            return True
         except SQLAlchemyError as e:
             await self.db.rollback()
-            return {"status": "error", "message": "Failed to delete subject", "error": str(e)}
-
-    async def update(self, subject: Subject):
+            print(f"Error deleting subject: {e}")
+            return False
+        
+    async def update(self, subject_id: int, subject_data: SubjectSchema):
         try:
+            subject = await self.get_by_id(subject_id)
+            if not subject:
+                raise ValueError("Subject not found.")
+            for key, value in subject_data.model_dump().items():
+                setattr(subject, key, value)
             await self.db.commit()
             await self.db.refresh(subject)
-            return {"status": "success", "data": subject}
+            return subject
         except SQLAlchemyError as e:
             await self.db.rollback()
-            return {"status": "error", "message": "Failed to update subject", "error": str(e)}
-
-    async def is_subject_name_exists(self, name: str):
-        try:
-            result = await self.db.execute(select(Subject).filter(Subject.name == name))
-            return {"status": "success", "exists": result.scalars().first() is not None}
-        except SQLAlchemyError as e:
-            return {"status": "error", "message": "Failed to check subject name", "error": str(e)}
+            print(f"Error updating subject: {e}")
+            return None
         
