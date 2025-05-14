@@ -21,10 +21,6 @@ class StudentRepository:
     async def add(self, student: StudentSchema):
         try:
             student = Student(**student.model_dump())
-            existing_student = await self.get_by_id(student.student_id)
-            if existing_student:
-                raise ValueError("Student with this ID already exists.")
-            
             self.db.add(student)
             await self.db.commit()
             await self.db.refresh(student)
@@ -33,11 +29,8 @@ class StudentRepository:
             await self.db.rollback()
             return None
 
-    async def delete(self, student_id: int):
+    async def delete(self, student: Student):
         try:
-            student = await self.get_by_id(student_id)
-            if not student:
-                raise ValueError("Student not found.")
             await self.db.delete(student)
             await self.db.commit()
             return True

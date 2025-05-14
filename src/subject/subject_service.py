@@ -13,14 +13,23 @@ class SubjectService:
         return subjects
 
     async def add_subject(self, subject_data: SubjectSchema):
+        is_existing_subject = await self.repo.get_by_id(subject_data.subject_id)
+        if is_existing_subject:
+            raise ValueError("Subject already exists.")
         subject = await self.repo.add(subject_data)
         return subject
 
     async def remove_subject(self, subject_id: int):
-        result = await self.repo.delete(subject_id)
+        subject = await self.repo.get_by_id(subject_id)
+        if not subject:
+            raise ValueError("Subject not found.")
+        result = await self.repo.delete(subject)
         return result
 
     async def update(self, subject_id: int, subject_data: SubjectSchema):
-        subject = await self.repo.update(subject_id, subject_data)
+        subject = await self.get_by_id(subject_id)
+        if not subject:
+            raise ValueError("Subject not found.")
+        subject = await self.repo.update(subject, subject_data)
         return subject
         

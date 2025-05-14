@@ -2,67 +2,49 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from score.score_model import Score
 from score.score_repository import ScoreRepository
 import datetime
-
+from student.student_repository import StudentRepository
+from score.score_schema import ScoreSchema
 class ScoreService:
     def __init__(self, db: AsyncSession):
         self.repository = ScoreRepository(db)
+        self.student_repo = StudentRepository(db)
 
     async def get_all_scores(self):
-        try:
-            scores = await self.repository.get_all()
-            if scores.get("status") == "error":
-                return {"status": "error", "message": scores.get("message")}
-            return scores
-        except Exception:
-            return {"status": "error", "message": "Failed to fetch scores"}
+        result = await self.repository.get_all()
+        return result
 
     async def get_student_scores(self, student_id: int, is_ascending: bool):
-        if student_id is None:
-            return {"status": "error", "message": "Missing student_id"}
-        try:
-            scores = await self.repository.get_by_student(student_id, is_ascending)
-            if scores.get("status") == "error":
-                return {"status": "error", "message": scores.get("message")}
-            return {"status": "success", "data": scores.get("data")}
-        except Exception:
-            return {"status": "error", "message": "Failed to fetch student's scores"}
+        is_existing_student = await self.student_repo.get_by_id(student_id)
+        if not is_existing_student:
+            raise ValueError("Student not found.")
+        result = await self.repository.get_student_scores(student_id, is_ascending)
+        return result
 
-    async def get_avg_score(self, student_id: int):
-        if student_id is None:
-            return {"status": "error", "message": "Missing student_id"}
-        try:
-            avg_score = await self.repository.get_avg_by_student(student_id)
-            if avg_score.get("status") == "error":
-                return {"status": "error", "message": avg_score.get("message")}
-            return avg_score
-        except Exception:
-            return {"status": "error", "message": "Failed to calculate average score"}
+    async def get_student_avg_score(self, student_id: int):
+        is_existing_student = await self.student_repo.get_by_id(student_id)
+        if not is_existing_student:
+            raise ValueError("Student not found.")
+        result = await self.repository.get_student_avg_score(student_id)
+        return result
+    
 
-    async def max_score_subjects(self):
-        try:
-            max_scores = await self.repository.get_max_score_subjects()
-            if max_scores.get("status") == "error":
-                return {"status": "error", "message": max_scores.get("message")}
-            return max_scores
-        except Exception:
-            return {"status": "error", "message": "Failed to fetch max scores by subject"}
+    async def get_max_subject_scores(self):
+        result = await self.repository.get_max_subject_scores()
+        return result
 
-    async def add_score(self, student_id: int, subject_id: int, score: float, date: datetime.date):
-        if not all([student_id, subject_id, score, date]):
-            return {"status": "error", "message": "Missing one or more required fields"}
-        new_score = Score(
-            student_id=student_id,
-            subject_id=subject_id,
-            score=score,
-            date=date
-        )
-        try:
-            added_score = await self.repository.add(new_score)
-            if added_score.get("status") == "error":
-                return {"status": "error", "message": added_score.get("message")}
-            return added_score
-        except Exception:
-            return {"status": "error", "message": "Failed to add score"}
+    async def add_score(self, score: ScoreSchema):
+        if score is not None:
+            is_existing_score = await self.repository.get_by_id(score.score_id)
+            if is_existing_score:
+                raise ValueError("Score already exists.")
+        student = await self.student_repo.get_by_id(score.student_id)
+        subject = await self.repository.get_subject_by_id(score.subject_id)
+        if not student:
+            raise ValueError("Student not found.")
+        if not subject:
+            raise ValueError("Subject not found.")
+        score = self.repository.add(score)
+        return score        
 
     async def remove_score(self, score_id: int):
         if score_id is None:

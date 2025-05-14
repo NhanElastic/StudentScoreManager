@@ -5,7 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d9751393-2b76-4473-91a5-28db959567cf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/5f39d870-40c3-4644-a928-c5b0c2b69de2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/5f39d870-40c3-4644-a928-c5b0c2b69de2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/default.env" beforeDir="false" afterPath="$PROJECT_DIR$/default.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/score/score_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/score/score_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/score/score_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/score/score_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/score/score_schema.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/score/score_schema.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/score/score_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/score/score_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/student/student_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/student/student_controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/student/student_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/student/student_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/student/student_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/student/student_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/subject/subject_repository.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/subject/subject_repository.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/subject/subject_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/subject/subject_service.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -5,7 +5,6 @@ from database.database import get_db
 from student.student_schema import StudentSchema
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
-from typing import List
 from fastapi.encoders import jsonable_encoder
 
 router = APIRouter(
@@ -14,7 +13,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# Centralized exception handler
 async def handle_exception(e: Exception):
     if isinstance(e, HTTPException):
         return JSONResponse(content={"message": e.detail}, status_code=e.status_code)

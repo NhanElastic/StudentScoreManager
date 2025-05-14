@@ -5,6 +5,8 @@ from student import student_controller
 from subject import subject_controller
 from score import score_controller
 from fastapi.middleware.cors import CORSMiddleware
+from auth import auth_controller
+from user import user_controller
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,3 +44,5 @@ app.add_middleware(
 app.include_router(student_controller.router)
 app.include_router(subject_controller.router)
 app.include_router(score_controller.router)
+app.include_router(auth_controller.router)
+app.include_router(user_controller.router)

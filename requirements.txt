@@ -5,3 +5,5 @@ SQLAlchemy==2.0.39
 sqlmodel==0.0.24
 fastapi[standard]
 aiomysql
+pyjwt
+passlib[bcrypt]

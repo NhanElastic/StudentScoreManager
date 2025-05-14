@@ -20,10 +20,6 @@ class SubjectRepository:
     async def add(self, subject: SubjectSchema):
         try:
             subject = Subject(**subject.model_dump())
-            is_existing = await self.get_by_id(subject.subject_id)
-            if is_existing:
-                raise ValueError("Subject with this ID already exists.")
-            
             self.db.add(subject)
             await self.db.commit()
             await self.db.refresh(subject)
@@ -33,11 +29,8 @@ class SubjectRepository:
             print(f"Error adding subject: {e}")
             return None
         
-    async def delete(self, subject_id: int):
+    async def delete(self, subject: Subject):
         try:
-            subject = await self.get_by_id(subject_id)
-            if not subject:
-                raise ValueError("Subject not found.")
             await self.db.delete(subject)
             await self.db.commit()
             return True
