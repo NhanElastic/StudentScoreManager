@@ -16,7 +16,7 @@ router = APIRouter(
 
 ANYROLE = ["admin", "user"]
 
-async def handle_exception(e: Exception):
+def handle_exception(e: Exception):
     if isinstance(e, HTTPException):
         return JSONResponse(content={"message": e.detail}, status_code=e.status_code)
     elif isinstance(e, SQLAlchemyError):
