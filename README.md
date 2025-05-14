@@ -35,31 +35,3 @@ Run backend server:
 ```bash
 fastapi dev src/main.py
 ```
-
-Open another terminal window and run  frontend server by following command:
-
-### In Command Prompt:
-```bash
-"frontend\index.html"
-```
-
-### In Powershell:
-```bash
-start frontend\index.html
-```
-
-### In Linux:
-Use any browser to open the file `frontend/index.html`
-```bash
-xdg-open frontend/index.html
-```
-Note: Make sure to replace `xdg-open` with the appropriate command for your Linux distribution if necessary.
-
-### In MacOS:
-```bash
-open frontend/index.html
-``` 
-
-## Contributors
-Vo Thanh Nhan - 230322\
-Nguyen Khoi Nguyen - 230320
