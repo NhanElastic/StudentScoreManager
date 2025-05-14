@@ -24,7 +24,17 @@ class UserRepository:
             print(f"Error creating user: {e}")
             raise
     
-    
+    async def change_password(self, user: User, new_password: str):
+        try:
+            user.password = new_password
+            await self.db.commit()
+            await self.db.refresh(user)
+            return user
+        except Exception as e:
+            await self.db.rollback()
+            print(f"Error changing password: {e}")
+            raise
+
     def update_user(self, user_id, user_data):
         # Logic to update an existing user in the database
         pass

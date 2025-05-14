@@ -8,7 +8,7 @@ class CreateUserReq(BaseModel):
 
 class CreateUserRes(BaseModel):
     username: str
-    role: str
+    scopes: str
 
     class Config:
         from_attributes = True
@@ -18,3 +18,6 @@ class UpdateUser(BaseModel):
     password: Optional[str] = None
     role: Optional[str] = None
 
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str

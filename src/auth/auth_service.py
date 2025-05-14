@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 import os
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
 class AuthService:
     def __init__(self, db: AsyncSession):
         self.user_repository = UserRepository(db)
