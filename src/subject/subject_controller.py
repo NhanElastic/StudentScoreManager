@@ -6,6 +6,8 @@ from database.database import get_db
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.exc import SQLAlchemyError
+from guard.guard_service import RoleGuard
+ANYROLE = ["admin", "user"]
 
 router = APIRouter(
     prefix="/api/subjects",
@@ -21,7 +23,7 @@ async def handle_exception(e: Exception):
     else:
         return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
 
-@router.get("/list")
+@router.get("/list", dependencies=[RoleGuard(ANYROLE)])
 async def get_subjects(db: AsyncSession = Depends(get_db)):
     try:
         subject_service = SubjectService(db)
@@ -32,7 +34,7 @@ async def get_subjects(db: AsyncSession = Depends(get_db)):
     except Exception as e:
         return await handle_exception(e)
 
-@router.post("/add")
+@router.post("/add", dependencies=[RoleGuard(["admin"])])
 async def add_subject(subject_data: SubjectSchema, db: AsyncSession = Depends(get_db)):
     try:
         subject_service = SubjectService(db)
@@ -44,7 +46,7 @@ async def add_subject(subject_data: SubjectSchema, db: AsyncSession = Depends(ge
     except Exception as e:
         return await handle_exception(e)
     
-@router.delete("/remove/{subject_id}")
+@router.delete("/remove/{subject_id}", dependencies=[RoleGuard(["admin"])])
 async def remove_subject(subject_id: int, db: AsyncSession = Depends(get_db)):
     try:
         subject_service = SubjectService(db)
@@ -58,7 +60,7 @@ async def remove_subject(subject_id: int, db: AsyncSession = Depends(get_db)):
     except Exception as e:
         return await handle_exception(e)
 
-@router.put("/update/{subject_id}")
+@router.put("/update/{subject_id}", dependencies=[RoleGuard(["admin"])])
 async def update_subject(subject_id: int, subject_data: SubjectSchema, db: AsyncSession = Depends(get_db)):
     try:
         subject_service = SubjectService(db)

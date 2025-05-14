@@ -6,12 +6,15 @@ from student.student_schema import StudentSchema
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.encoders import jsonable_encoder
+from guard.guard_service import RoleGuard
 
 router = APIRouter(
     prefix="/api/students",
     tags=["students"],
     responses={404: {"description": "Not found"}},
 )
+
+ANYROLE = ["admin", "user"]
 
 async def handle_exception(e: Exception):
     if isinstance(e, HTTPException):
@@ -21,7 +24,7 @@ async def handle_exception(e: Exception):
     else:
         return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
     
-@router.get("/list")
+@router.get("/list", dependencies=[RoleGuard(ANYROLE)])
 async def get_students(db: AsyncSession = Depends(get_db)):
     try:
         student_service = StudentService(db)
@@ -33,7 +36,7 @@ async def get_students(db: AsyncSession = Depends(get_db)):
         return await handle_exception(e)
 
 
-@router.post("/add")
+@router.post("/add", dependencies=[RoleGuard(["admin"])])
 async def add_student(student_data: StudentSchema, db: AsyncSession = Depends(get_db)):
     try:
         student_service = StudentService(db)
@@ -46,7 +49,7 @@ async def add_student(student_data: StudentSchema, db: AsyncSession = Depends(ge
     except Exception as e:
         return await handle_exception(e)
 
-@router.delete("/remove/{student_id}")
+@router.delete("/remove/{student_id}", dependencies=[RoleGuard(["admin"])])
 async def remove_student(student_id: int, db: AsyncSession = Depends(get_db)):
     try:
         student_service = StudentService(db)
@@ -61,7 +64,7 @@ async def remove_student(student_id: int, db: AsyncSession = Depends(get_db)):
     except Exception as e:
         return await handle_exception(e)
 
-@router.put("/update/{student_id}")
+@router.put("/update/{student_id}", dependencies=[RoleGuard(["admin"])])
 async def update_student(student_id: int, student_data: StudentSchema, db: AsyncSession = Depends(get_db)):
     try:
         student_service = StudentService(db)
@@ -77,7 +80,7 @@ async def update_student(student_id: int, student_data: StudentSchema, db: Async
     except Exception as e:
         return await handle_exception(e)
     
-@router.get("/get_by_id/{student_id}")
+@router.get("/get_by_id/{student_id}", dependencies=[RoleGuard(ANYROLE)])
 async def get_student_by_id(student_id: int, db: AsyncSession = Depends(get_db)):
     try:
         student_service = StudentService(db)

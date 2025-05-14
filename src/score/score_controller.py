@@ -6,12 +6,15 @@ from score.score_schema import ScoreSchema, StudentScoreSchema
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.exc import SQLAlchemyError
+from guard.guard_service import RoleGuard
 
 router = APIRouter(
     prefix="/api/scores",
     tags=["scores"],
     responses={404: {"description": "Not found"}},
 )
+
+ANYROLE = ["admin", "user"]
 
 async def handle_exception(e: Exception):
     if isinstance(e, HTTPException):
@@ -21,7 +24,7 @@ async def handle_exception(e: Exception):
     else:
         return JSONResponse(content={"message": "An unexpected error occurred", "error": str(e)}, status_code=500)
 
-@router.get("/student/{student_id}/{isAscending}")
+@router.get("/student/{student_id}/{isAscending}", dependencies=[RoleGuard(ANYROLE)])
 async def get_student_scores(student_id: int, isAscending: bool = True, db: AsyncSession = Depends(get_db)):
     try:
         if student_id is None:
@@ -33,7 +36,7 @@ async def get_student_scores(student_id: int, isAscending: bool = True, db: Asyn
     except Exception as e:
         return await handle_exception(e)
     
-@router.get("/list")
+@router.get("/list", dependencies=[RoleGuard(ANYROLE)])
 async def get_all_scores(db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
@@ -43,7 +46,7 @@ async def get_all_scores(db: AsyncSession = Depends(get_db)):
     except Exception as e:
         return await handle_exception(e)
     
-@router.get("/avg/{student_id}")
+@router.get("/avg/{student_id}", dependencies=[RoleGuard(ANYROLE)])
 async def get_avg_score(student_id: int, db: AsyncSession = Depends(get_db)):
     try:
         if student_id is None:
@@ -58,7 +61,7 @@ async def get_avg_score(student_id: int, db: AsyncSession = Depends(get_db)):
 
 
     
-@router.post("/add")
+@router.post("/add", dependencies=[RoleGuard(["admin"])])
 async def add_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_db)):
     try:
         if score_data is None:
@@ -72,7 +75,7 @@ async def add_score(score_data: ScoreSchema, db: AsyncSession = Depends(get_db))
     except Exception as e:
         return await handle_exception(e)
 
-@router.delete("/remove/{score_id}")
+@router.delete("/remove/{score_id}", dependencies=[RoleGuard(["admin"])])
 async def remove_score(score_id: int, db: AsyncSession = Depends(get_db)):
     try:
         if score_id is None:
@@ -85,7 +88,7 @@ async def remove_score(score_id: int, db: AsyncSession = Depends(get_db)):
     except Exception as e:
         return await handle_exception(e)
     
-@router.put("/update/{score_id}")
+@router.put("/update/{score_id}", dependencies=[RoleGuard(["admin"])])
 async def update_score(score_id: int, score_data: ScoreSchema, db: AsyncSession = Depends(get_db)):
     try:
         if score_id is None:
@@ -99,7 +102,7 @@ async def update_score(score_id: int, score_data: ScoreSchema, db: AsyncSession 
     except Exception as e:
         return await handle_exception(e)
     
-@router.get("/top/{limit}")
+@router.get("/top/{limit}", dependencies=[RoleGuard(ANYROLE)])
 async def get_top_scores(limit: int = 10, db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
@@ -111,7 +114,7 @@ async def get_top_scores(limit: int = 10, db: AsyncSession = Depends(get_db)):
     except Exception as e:
         return await handle_exception(e)
     
-@router.get("/avg_all")
+@router.get("/avg_all", dependencies=[RoleGuard(ANYROLE)])
 async def calculate_all_avg_scores(db: AsyncSession = Depends(get_db)):
     try:
         score_service = ScoreService(db)
