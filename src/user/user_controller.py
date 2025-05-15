@@ -43,7 +43,7 @@ async def change_password(
         user_service = UserService(db)
         if not request.new_password or not request.old_password:
             raise HTTPException(status_code=400, detail="New password and old password are required")
-        user = await user_service.change_password(current_user, request.old_password, request.new_password)
+        user = await user_service.change_password(current_user, request)
         if not user:
             raise HTTPException(status_code=500, detail="Failed to change password")
         return JSONResponse(content={"message": "Password changed successfully"}, status_code=200)

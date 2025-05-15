@@ -7,3 +7,4 @@ fastapi[standard]
 aiomysql
 pyjwt
 passlib[bcrypt]
+bcrypt==3.2.0

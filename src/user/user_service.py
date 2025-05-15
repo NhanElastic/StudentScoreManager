@@ -1,4 +1,4 @@
-from user.user_schema import CreateUserReq
+from user.user_schema import CreateUserReq, ChangePasswordRequest
 import os
 from passlib.context import CryptContext
 from user.user_repository import UserRepository
@@ -28,10 +28,9 @@ class UserService:
         user = await self.user_repository.create_user(username, hashed_password, role)
         return user
     
-    async def change_password(self, username: str, old_password: str, new_password: str):
-        user = await self.auth_service.authenticate_user(username, old_password)
-        print(f"User authenticated: {user.username}")
-        hashed_password = self.pwd_context.hash(new_password)
+    async def change_password(self, username: str, data: ChangePasswordRequest):
+        user = await self.auth_service.authenticate_user(username, data.old_password)
+        hashed_password = self.pwd_context.hash(data.new_password)
         updated_user = await self.user_repository.change_password(user, hashed_password)
         return updated_user
 
